@@ -83,13 +83,16 @@
   [key-file cert-file ca-cert-file]
   (let [key     (private-key key-file)
         cert    (load-certificate cert-file)
-        ca-cert (load-certificate ca-cert-file)]
-    (doto (KeyStore/getInstance (KeyStore/getDefaultType))
-      (.load nil nil)
-      ; alias, private key, password, certificate chain
-      (.setKeyEntry "cert" key key-store-password
-                    (into-array Certificate [cert])))))
-;      (.setCertificateEntry "cacert" ca-cert))))
+;        ca-cert (load-certificate ca-cert-file)
+        ]
+    (when ca-cert-file
+      (doto (KeyStore/getInstance (KeyStore/getDefaultType))
+        (.load nil nil)
+        ; alias, private key, password, certificate chain
+        (.setKeyEntry "cert" key key-store-password
+                      (into-array Certificate [cert]))
+       ;(.setCertificateEntry "cacert" ca-cert))
+        (KeyStore/getInstance (KeyStore/getDefaultType))))))))
 
 (defn trust-store
   "Makes a trust store, suitable for backing a TrustManager, out of a CA cert
